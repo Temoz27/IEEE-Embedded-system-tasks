@@ -1,0 +1,120 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
+typedef struct {
+    int rows;
+    int cols;
+    float **data;
+} Matrix;
+
+Matrix* create_matrix(int rows, int cols);
+void free_matrix(Matrix *m);
+Matrix* add_matrices(const Matrix *a, const Matrix *b);
+Matrix* subtract_matrices(const Matrix *a, const Matrix *b);
+void print_matrix(const Matrix *m);
+
+#endif
+
+
+//  at the second file
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "matrix.h"
+
+Matrix* create_matrix(int rows, int cols) {
+    Matrix *m = (Matrix*)malloc(sizeof(Matrix));
+    m->rows = rows;
+    m->cols = cols;
+    m->data = (float**)malloc(rows * sizeof(float*));
+    for (int i = 0; i < rows; i++) {
+        m->data[i] = (float*)malloc(cols * sizeof(float));
+    }
+    return m;
+}
+
+void free_matrix(Matrix *m) {
+    if (m == NULL) return;
+    for (int i = 0; i < m->rows; i++) {
+        free(m->data[i]);
+    }
+    free(m->data);
+    free(m);
+}
+
+Matrix* add_matrices(const Matrix *a, const Matrix *b) {
+    if (a->rows != b->rows || a->cols != b->cols) return NULL;
+
+    Matrix *res = create_matrix(a->rows, a->cols);
+    for (int i = 0; i < a->rows; i++) {
+        for (int j = 0; j < a->cols; j++) {
+            res->data[i][j] = a->data[i][j] + b->data[i][j];
+        }
+    }
+    return res;
+}
+
+Matrix* subtract_matrices(const Matrix *a, const Matrix *b) {
+    if (a->rows != b->rows || a->cols != b->cols) return NULL;
+
+    Matrix *res = create_matrix(a->rows, a->cols);
+    for (int i = 0; i < a->rows; i++) {
+        for (int j = 0; j < a->cols; j++) {
+            res->data[i][j] = a->data[i][j] - b->data[i][j];
+        }
+    }
+    return res;
+}
+
+void print_matrix(const Matrix *m) {
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            printf("%.1f  ", m->data[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
+
+// at third file to run
+
+
+
+
+#include <stdio.h>
+#include "matrix.h"
+
+int main() {
+    Matrix *m1 = create_matrix(2, 2);
+    Matrix *m2 = create_matrix(2, 2);
+
+    m1->data[0][0] = 5.0; m1->data[0][1] = 3.0;
+    m1->data[1][0] = 1.0; m1->data[1][1] = 7.0;
+
+    m2->data[0][0] = 2.0; m2->data[0][1] = 1.0;
+    m2->data[1][0] = 0.0; m2->data[1][1] = 4.0;
+
+    printf("Matrix 1:\n");
+    print_matrix(m1);
+    
+    printf("\nMatrix 2:\n");
+    print_matrix(m2);
+
+    Matrix *sum = add_matrices(m1, m2);
+    printf("\nAddition Result:\n");
+    print_matrix(sum);
+
+    Matrix *sub = subtract_matrices(m1, m2);
+    printf("\nSubtraction Result:\n");
+    print_matrix(sub);
+
+    free_matrix(m1);
+    free_matrix(m2);
+    free_matrix(sum);
+    free_matrix(sub);
+
+    return 0;
+}
