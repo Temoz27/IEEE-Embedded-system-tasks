@@ -1,0 +1,31 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+ISR(INT0_vect)
+{
+    PORTC |= (1<<PC0);
+    PORTA = (1<<PA0);
+    PORTA &= ~((1<<PA1) | (1<<PA2));
+}
+
+void INT0_Init(void)
+{
+    DDRD &= ~(1<<PD2);
+    PORTD |= (1<<PD2);
+    MCUCR |= (1<<ISC00) | (1<<ISC01);
+    GICR  |= (1<<INT0);
+    SREG  |= (1<<7);
+}
+
+int main(void)
+{
+    DDRA = 0xFF;
+    DDRC |= (1<<PC0);
+
+    INT0_Init();
+
+    while(1)
+    {
+    }
+}
+
